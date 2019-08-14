@@ -16,7 +16,7 @@
  * @package    Fontis_Recaptcha
  * @author     Denis Margetic
  * @author     Chris Norton
- * @copyright  Copyright (c) 2009 Fontis Pty. Ltd. (http://www.fontis.com.au)
+ * @copyright  Copyright (c) 2010 Fontis Pty. Ltd. (http://www.fontis.com.au)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 include_once "Mage/Sendfriend/controllers/ProductController.php";
@@ -44,7 +44,7 @@ class Fontis_Recaptcha_ProductController extends Mage_Sendfriend_ProductControll
                 else
                 { // if recaptcha response is incorrect, reload the page
                     Mage::getSingleton('catalog/session')->addError($this->__('Your reCAPTCHA entry is incorrect. Please try again.'));
-                    Mage::getSingleton('catalog/session')->setFormData($data);
+                    Mage::getSingleton('catalog/session')->setSendfriendFormData($data);
                     $this->_redirectReferer();
                     return;
                 }
