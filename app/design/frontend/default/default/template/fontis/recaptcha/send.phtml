@@ -96,7 +96,7 @@
                             <li>
                                 <div class="left">
                                     <label for="recipients_name"><?php echo $this->__('Name:') ?> <span class="required">*</span></label><br/>
-                                    <div style="width:250px"><input name="recipients[name][]" type="text" class="input-text required-entry" id="recipients_name" style="width:250px;" /></div><br /><br />
+                                    <div style="width:250px"><input name="recipients[name][]"  type="text" class="input-text required-entry" id="recipients_name" style="width:250px;" /></div><br /><br />
                                 </div>
                                 <div class="right">
                                     <label for="recipients_email"><?php echo $this->__('Email Address:') ?> <span class="required">*</span></label><br/>
@@ -120,8 +120,13 @@
 
         </div>
      
-        <?php  // recaptcha 
-            if (Mage::getStoreConfig("sendfriend/recaptcha/enabled")) {            
+        <?php  // recaptcha
+            if (Mage::getStoreConfig("admin/recaptcha/when_loggedin"))
+                $logged_out = !(Mage::getSingleton('customer/session')->isLoggedIn());
+            else
+                $logged_out = true;
+
+            if (Mage::getStoreConfig("sendfriend/recaptcha/enabled") && $logged_out) {
                 // set the recaptcha theme based on preferences
                 echo '<script> var RecaptchaOptions = { theme : \'';
                 echo Mage::getStoreConfig("admin/recaptcha/recaptcha_theme");

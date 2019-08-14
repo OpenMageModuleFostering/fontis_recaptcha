@@ -56,8 +56,13 @@
                 </ul>
     </fieldset>
     
-    <?php  // recaptcha 
-        if (Mage::getStoreConfig("contacts/recaptcha/enabled")) {            
+    <?php  // recaptcha
+        if (Mage::getStoreConfig("admin/recaptcha/when_loggedin"))
+            $logged_out = !(Mage::getSingleton('customer/session')->isLoggedIn());
+        else
+            $logged_out = true;
+
+        if (Mage::getStoreConfig("contacts/recaptcha/enabled") && $logged_out) {
             // set the recaptcha theme based on preferences
             echo '<script> var RecaptchaOptions = { theme : \'';
             echo Mage::getStoreConfig("admin/recaptcha/recaptcha_theme");

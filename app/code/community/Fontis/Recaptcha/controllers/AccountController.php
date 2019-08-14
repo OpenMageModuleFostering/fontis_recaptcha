@@ -105,11 +105,13 @@ class Fontis_Recaptcha_AccountController extends Mage_Customer_AccountController
                 }
                 $this->_redirectError(Mage::getUrl('*/*/create', array('_secure'=>true)));
             }else{ // if recaptcha response is incorrect, reload the page
-                $this->_redirectReferer();
-                return;
+            	$this->_getSession()->addError($this->__('Your reCAPTCHA entry is incorrect. Please try again.'));
+            	$this->_getSession()->setCustomerFormData($this->getRequest()->getPost());
+				$this->_redirectReferer();
+				return;
             }
         } else { // if recaptcha is not enabled, use core function alone
-            parent::sendmailAction();
+            parent::createPostAction();
         }
     }
 }

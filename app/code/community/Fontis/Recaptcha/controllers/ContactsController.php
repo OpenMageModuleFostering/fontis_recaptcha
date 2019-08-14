@@ -22,10 +22,16 @@
 include_once "Mage/Contacts/controllers/IndexController.php";
 
 class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
-{    
+{
+
     public function postAction()
     {
-        if (Mage::getStoreConfig("sendfriend/recaptcha/enabled")) { // check that recaptcha is actually enabled
+        if (Mage::getStoreConfig("admin/recaptcha/when_loggedin"))
+            $logged_out = !(Mage::getSingleton('customer/session')->isLoggedIn());
+        else
+            $logged_out = true;
+
+        if (Mage::getStoreConfig("contacts/recaptcha/enabled") && $logged_out) { // check that recaptcha is actually enabled
             // get private key from system configuration
             $privatekey = Mage::getStoreConfig("admin/recaptcha/private_key");
             // check response
@@ -34,8 +40,9 @@ class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
                                                                         $_POST["recaptcha_challenge_field"],
                                                                         $_POST["recaptcha_response_field"]
                                                                      );
+            $post = $this->getRequest()->getPost();
+
             if ($resp == true) { // if recaptcha response is correct, follow core functionality
-                $post = $this->getRequest()->getPost();
                 if ( $post ) {
                     $translate = Mage::getSingleton('core/translate');
                     /* @var $translate Mage_Core_Model_Translate */
@@ -75,7 +82,7 @@ class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
                         return;
                     } catch (Exception $e) {
                         $translate->setTranslateInline(true);
-                        Mage::getSingleton('customer/session')->addError(Mage::helper('contacts')->__('Unable to submit your request. Please, try again later'));
+                        Mage::getSingleton('customer/session')->addError(Mage::helper('contacts')->__('Unable to submit your request. Please, try again later.'));
                         $this->_redirect('*/*/');
                         return;
                     }
@@ -83,11 +90,12 @@ class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
                     $this->_redirect('*/*/');
                 }
             }else{ // if recaptcha response is incorrect, reload the page
-                $this->_redirectReferer();
+                Mage::getSingleton('customer/session')->addError(Mage::helper('contacts')->__('Your reCAPTCHA entry is incorrect. Please try again.'));
+                $this->_redirect('contacts/');
                 return;
             }
         } else { // if recaptcha is not enabled, use core function alone
-            parent::sendmailAction();
+            parent::postAction();
         }
     }    
 }

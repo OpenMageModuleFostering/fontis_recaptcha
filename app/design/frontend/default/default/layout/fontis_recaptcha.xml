@@ -51,5 +51,46 @@
         <reference name="content">
             <block type="customer/form_register" name="customer_form_register" template="fontis/recaptcha/register.phtml"/>
         </reference>
-    </recaptcha_account_create>
+    </recaptcha_account_create>  
+    
+    <!-- As Magento won't properly rewrite a single action in the controller, below handles update unchanged actions back to defaults -->
+	<recaptcha_account_login>
+		<update handle="customer_account_login"/>
+    </recaptcha_account_login>
+    <recaptcha_account_forgotpassword>
+ 		<update handle="customer_account_forgotpassword"/>
+    </recaptcha_account_forgotpassword>
+    <recaptcha_logged_in>
+ 		<update handle="customer_logged_in"/>
+	</recaptcha_logged_in>
+    <recaptcha_logged_out>
+ 		<update handle="customer_logged_out"/>
+	</recaptcha_logged_out>
+	<recaptcha_account_logoutsuccess>
+ 		<update handle="customer_account_logoutsuccess"/>    
+    </recaptcha_account_logoutsuccess>
+    <recaptcha_account_confirmation>
+ 		<update handle="customer_account_confirmation"/>    
+    </recaptcha_account_confirmation>
+    <recaptcha_account_edit>
+        <update handle="customer_account_edit"/>
+    </recaptcha_account_edit>
+    <recaptcha_account>
+        <update handle="customer_account"/>
+    </recaptcha_account>
+    <recaptcha_account_index>
+        <update handle="customer_account_index"/>
+    </recaptcha_account_index>
+	<recaptcha_address_index>
+        <update handle="customer_address_index"/>
+    </recaptcha_address_index>
+	<recaptcha_address_form>
+        <update handle="customer_address_form"/>
+    </recaptcha_address_form>
 </layout>
+
+
+
+
+
+

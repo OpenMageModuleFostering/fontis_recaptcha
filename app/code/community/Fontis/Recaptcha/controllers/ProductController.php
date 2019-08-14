@@ -24,8 +24,13 @@ include_once "Mage/Sendfriend/controllers/ProductController.php";
 class Fontis_Recaptcha_ProductController extends Mage_Sendfriend_ProductController
 {
     public function sendmailAction()
-    {  
-        if (Mage::getStoreConfig("sendfriend/recaptcha/enabled")) { // check that recaptcha is actually enabled     
+    {
+        if (Mage::getStoreConfig("admin/recaptcha/when_loggedin"))
+            $logged_out = !(Mage::getSingleton('customer/session')->isLoggedIn());
+        else
+            $logged_out = true;
+
+        if (Mage::getStoreConfig("sendfriend/recaptcha/enabled") && $logged_out) { // check that recaptcha is actually enabled
             // get private key from system configuration
             $privatekey = Mage::getStoreConfig("admin/recaptcha/private_key");
             // check response
@@ -34,10 +39,13 @@ class Fontis_Recaptcha_ProductController extends Mage_Sendfriend_ProductControll
                                                                         $_POST["recaptcha_challenge_field"],
                                                                         $_POST["recaptcha_response_field"]
                                                                      );
+                                                                     
+			$product = $this->_initProduct();
+            $sendToFriendModel = $this->_initSendToFriendModel();
+            $data = $this->getRequest()->getPost();                                                                     
+                                                                     
             if ($resp == true) { // if recaptcha response is correct, follow core functionality
-                $product = $this->_initProduct();
-                $sendToFriendModel = $this->_initSendToFriendModel();
-                $data = $this->getRequest()->getPost();
+                
                 if (!$product || !$product->isVisibleInCatalog() || !$data) {
                     $this->_forward('noRoute');
                     return;
@@ -76,6 +84,8 @@ class Fontis_Recaptcha_ProductController extends Mage_Sendfriend_ProductControll
                 }
                 $this->_redirectError(Mage::getURL('*/*/send',array('id'=>$product->getId())));
             } else { // if recaptcha response is incorrect, reload the page
+                Mage::getSingleton('catalog/session')->addError($this->__('Your reCAPTCHA entry is incorrect. Please try again.'));
+                Mage::getSingleton('catalog/session')->setFormData($data);
                 $this->_redirectReferer();
                 return;
             }
