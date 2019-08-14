@@ -132,19 +132,11 @@
             </li>
         </ul>
     </fieldset>
-     
-    <?php  // recaptcha 
-        if (Mage::getStoreConfig("customer/recaptcha/enabled")) {            
-            // set the recaptcha theme based on preferences
-            echo '<script> var RecaptchaOptions = { theme : \'';
-            echo Mage::getStoreConfig("admin/recaptcha/recaptcha_theme");
-            echo '\' }; </script>';
-            // show the recaptcha form
-            $publickey = Mage::getStoreConfig("admin/recaptcha/public_key");
-	        echo Mage::helper("recaptcha")->recaptcha_get_html($publickey);
-	    }
-    ?>
-    
+
+    <?php if (Mage::getStoreConfig("fontis_recaptcha/recaptcha/customer")): ?>
+        <?php echo $this->getChildHtml('recaptcha_box') ?>
+    <?php endif; ?>
+
     <div class="button-set">
         <p class="required"><?php echo $this->__('* Required Fields') ?></p>
         <a href="<?php echo $this->getBackUrl() ?>" class="left">&laquo; <?php echo $this->__('Back') ?></a>

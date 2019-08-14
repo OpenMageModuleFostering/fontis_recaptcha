@@ -24,85 +24,121 @@
 <config>
     <modules>
         <Fontis_Recaptcha>
-            <version>1.1.0</version>
+            <version>2.0.0</version>
         </Fontis_Recaptcha>
     </modules>
     <global>
+        <rewrite>
+            <fontis_recaptcha>
+                <from><![CDATA[#^/customer/account/createpost/#]]></from>
+                <to>/recaptcha/account/createpost/</to>
+            </fontis_recaptcha>
+        </rewrite>
+        <rewrite>
+            <fontis_recaptcha2>
+                <from><![CDATA[#^/sendfriend/product/sendmail/#]]></from>
+                <to>/recaptcha/product/sendmail/</to>
+            </fontis_recaptcha2>
+        </rewrite>
+        <rewrite>
+            <fontis_recaptcha3>
+                <from><![CDATA[#^/review/product/post/#]]></from>
+                <to>/recaptcha/review/post/</to>
+            </fontis_recaptcha3>
+        </rewrite>
+        <rewrite>
+           <fontis_recaptcha4>
+                <from><![CDATA[#^/contacts/contacts/post/#]]></from>
+                <to>/recaptcha/contacts/post/</to>
+            </fontis_recaptcha4>
+        </rewrite>
+        <rewrite>
+           <fontis_recaptcha5>
+                <from><![CDATA[#^/contacts#]]></from>
+                <to>/recaptcha/contacts/</to>
+            </fontis_recaptcha5>
+        </rewrite>
+
         <models>
             <fontis_recaptcha>
                 <class>Fontis_Recaptcha_Model</class>
             </fontis_recaptcha>
         </models>
-        <routers>
-            <sendfriend>
+        <blocks>
+            <review>
                 <rewrite>
-                    <product>
-                        <to>recaptcha/product</to>
-                    </product>
+                    <form>Fontis_Recaptcha_Block_Review_Form</form>
                 </rewrite>
-            </sendfriend>
-            <customer>
-                <rewrite>
-                    <account>
-						<to>recaptcha/account</to>
-                    </account>
-                </rewrite>
-            </customer>
-            <contacts>
-                <rewrite>
-                    <index>
-                        <to>recaptcha/contacts</to>
-                    </index>
-                </rewrite>
-            </contacts>
-        </routers>
+            </review>
+        </blocks>
         <helpers>
-            <recaptcha>
+            <fontis_recaptcha>
                 <class>Fontis_Recaptcha_Helper</class>
-            </recaptcha>
+            </fontis_recaptcha>
         </helpers>
     </global>
     <frontend>
         <routers>
-            <recaptcha>
+            <fontis_recaptcha>
                 <use>standard</use>
                 <args>
                     <module>Fontis_Recaptcha</module>
                     <frontName>recaptcha</frontName>
                 </args>
-            </recaptcha>
+            </fontis_recaptcha>
         </routers>
         <layout>
             <updates>
-                <recaptcha module="Fontis_Recaptcha">
+                <fontis_recaptcha module="Fontis_Recaptcha">
                     <file>fontis_recaptcha.xml</file>
-                </recaptcha>
+                </fontis_recaptcha>
             </updates>
-        </layout> 
+        </layout>
     </frontend>
     <default>
-        <admin>
-            <recaptcha>
+        <fontis_recaptcha>
+            <setup>
                 <public_key></public_key>
                 <private_key></private_key>
-                <recaptcha_theme>clean</recaptcha_theme>
+                <recaptcha_theme>magento</recaptcha_theme>
+                <language>en</language>
+                <textbox><b>Recaptcha helps stop spam.</b></textbox>
+            </setup>
+            <recaptcha>
                 <when_loggedin>1</when_loggedin>
+                <sendfriend>1</sendfriend>
+                <contacts>1</contacts>
+                <customer>1</customer>
+                <review>1</review>
             </recaptcha>
-        </admin>
-        <sendfriend>
-            <recaptcha>
-                <enabled>1</enabled>
-            </recaptcha>
-        </sendfriend>
-        <contacts>
-            <recaptcha>
-                <enabled>1</enabled>
-            </recaptcha>
-        </contacts>
-        <customer>
-            <recaptcha>
-                <enabled>1</enabled>
-            </recaptcha>
-        </customer>
+            <magento>
+                <text_captcha>Enter the words above:</text_captcha>
+                <audio_captcha>Enter the words you hear:</audio_captcha>
+            </magento>
+        </fontis_recaptcha>
     </default>
+    <adminhtml>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <fontis_recaptcha>
+                                            <title>Recaptcha</title>
+                                        </fontis_recaptcha>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
 </config>

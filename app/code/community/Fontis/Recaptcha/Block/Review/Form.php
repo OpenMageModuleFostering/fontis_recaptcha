@@ -20,16 +20,11 @@
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-class Fontis_Recaptcha_Model_Source_Recaptchatheme
+class Fontis_Recaptcha_Block_Review_Form extends Mage_Review_Block_Form
 {
-    public function toOptionArray()
+    public function __construct()
     {
-        return array(array('value' => 'clean', 'label' => 'Clean'),
-                     array('value' => 'white', 'label' => 'White'),
-                     array('value' => 'red', 'label' => 'Red'),
-                     array('value' => 'blackglass', 'label' => 'Blackglass'),
-                     array('value' => 'magento', 'label' => 'Magento'),
-                     array('value' => 'custom', 'label' => 'Custom'),
-                    );
+        parent::__construct();
+        $this->setTemplate('fontis/recaptcha/form.phtml');
     }
 }

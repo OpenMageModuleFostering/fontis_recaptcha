@@ -19,29 +19,15 @@
  * @copyright  Copyright (c) 2009 Fontis Pty. Ltd. (http://www.fontis.com.au)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-include_once "Mage/Contacts/controllers/IndexController.php";
+include_once "Mage/Review/controllers/ProductController.php";
 
-class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
+class Fontis_Recaptcha_ReviewController extends Mage_Review_ProductController
 {
-
-    public function indexAction()
-    {
-
-
-        $this->loadLayout();
-        $this->getLayout()->getBlock('contactForm')->setFormAction( Mage::getUrl('*/*/post') );
-
-        $this->_initLayoutMessages('customer/session');
-        $this->_initLayoutMessages('catalog/session');
-        $this->renderLayout();
-    }
-
-
     public function postAction()
     {
         if( !(Mage::getStoreConfig("fontis_recaptcha/recaptcha/when_loggedin")  && (Mage::getSingleton('customer/session')->isLoggedIn())) )
         {
-            if (Mage::getStoreConfig("fontis_recaptcha/recaptcha/contacts"))
+            if (Mage::getStoreConfig("fontis_recaptcha/recaptcha/review"))
             {
                 $privatekey = Mage::getStoreConfig("fontis_recaptcha/setup/private_key");
                 // check response
@@ -50,21 +36,16 @@ class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
                                                                                     $_POST["recaptcha_challenge_field"],
                                                                                     $_POST["recaptcha_response_field"]
                                                                                 );
+                $data = $this->getRequest()->getPost();
                 if ($resp == true)
                 { // if recaptcha response is correct, use core functionality
                     parent::postAction();
                 }
                 else
                 { // if recaptcha response is incorrect, reload the page
-
-                    Mage::getSingleton('customer/session')->addError(Mage::helper('contacts')->__('Your reCAPTCHA entry is incorrect. Please try again.'));
-
-                    $_SESSION['contact_comment'] = $_POST['comment'];
-                    $_SESSION['contact_name'] = $_POST['name'];
-                    $_SESSION['contact_email'] = $_POST['email'];
-                    $_SESSION['contact_telephone'] = $_POST['telephone'];
-
-                    $this->_redirect('contacts/');
+                    Mage::getSingleton('core/session')->addError($this->__('Your reCAPTCHA entry is incorrect. Please try again.'));
+                    Mage::getSingleton('review/session')->setFormData($data);
+                    $this->_redirectReferer();
                     return;
                 }
             }
@@ -77,6 +58,5 @@ class Fontis_Recaptcha_ContactsController extends Mage_Contacts_IndexController
         { // if recaptcha is not enabled, use core function alone
             parent::postAction();
         }
-    }    
+    }
 }
-?>

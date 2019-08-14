@@ -3,11 +3,11 @@
     "type": "magento-module",
     "license": "Open-Software-License-(OSL-3.0)",
     "homepage": "",
-    "description": "Adds reCAPTCHA to "Send Email to a Friend", "Contact Us" and "Account Creation" pages.",
+    "description": "Recaptcha extension",
     "authors": [
     {
-        "name": "Chris Norton",
-        "email": "chris.norton@fontis.com.au"
+        "name": "Denis Margetic",
+        "email": "denis@fontis.com.au"
     }
 ],
     "suggest": {

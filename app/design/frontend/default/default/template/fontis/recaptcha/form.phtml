@@ -1,83 +1,131 @@
 <?php
 /**
- * Fontis Recaptcha Extension
+ * Magento
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * http://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@magentocommerce.com so we can send you a copy immediately.
  *
- * @category   Fontis
- * @package    Fontis_Recaptcha
- * @author     Denis Margetic
- * @author     Chris Norton
- * @copyright  Copyright (c) 2009 Fontis Pty. Ltd. (http://www.fontis.com.au)
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   design_default
+ * @package    Mage
+ * @copyright  Copyright (c) 2008 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
 <div class="page-head">
-    <h3><?php echo Mage::helper('contacts')->__('Contact Us') ?></h3>
+    <h3><?php echo $this->__('Write Your Own Review') ?></h3>
 </div>
-<form action="<?php echo $this->getFormAction(); ?>" id="contactForm" method="post">
-    <fieldset class="group-select">
-        <h4 class="legend"><?php echo Mage::helper('contacts')->__('Contact Information') ?></h4>
-        <ul>
-        <li>
-                <div class="input-box">
-                    <label for="name"><?php echo Mage::helper('contacts')->__('Name') ?> <span class="required">*</span></label><br />
-                    <input name="name" id="name" title="<?php echo Mage::helper('contacts')->__('Name') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserName()) ?>" class="required-entry input-text" type="text" />
-                </div>
-
-                <div class="input-box">
-                    <label for="email"><?php echo Mage::helper('contacts')->__('Email') ?> <span class="required">*</span></label><br />
-                    <input name="email" id="email" title="<?php echo Mage::helper('contacts')->__('Email') ?>" value="<?php echo $this->htmlEscape($this->helper('contacts')->getUserEmail()) ?>" class="required-entry input-text validate-email" type="text" />
-                </div>
-
-                <div class="clear"></div>
-
-                <div class="input-box">
-                    <label for="telephone"><?php echo Mage::helper('contacts')->__('Telephone') ?></label><br />
-                    <input name="telephone" id="telephone" title="<?php echo Mage::helper('contacts')->__('Telephone') ?>" value="" class="input-text" type="text" />
-                </div>
-
-                <div class="clear"></div>
-
-                <div class="input-box">
-                    <label for="comment"><?php echo Mage::helper('contacts')->__('Comment') ?></label><br />
-                    <textarea name="comment" id="comment" title="<?php echo Mage::helper('contacts')->__('Comment') ?>" class="required-entry input-text" style="height:150px;width:525px;" cols="50" rows="5"></textarea>
-                </div>
-                </li>
-                </ul>
-    </fieldset>
-    
-    <?php  // recaptcha
-        if (Mage::getStoreConfig("admin/recaptcha/when_loggedin"))
-            $logged_out = !(Mage::getSingleton('customer/session')->isLoggedIn());
-        else
-            $logged_out = true;
-
-        if (Mage::getStoreConfig("contacts/recaptcha/enabled") && $logged_out) {
-            // set the recaptcha theme based on preferences
-            echo '<script> var RecaptchaOptions = { theme : \'';
-            echo Mage::getStoreConfig("admin/recaptcha/recaptcha_theme");
-            echo '\' }; </script>';
-            // show the recaptcha form
-            $publickey = Mage::getStoreConfig("admin/recaptcha/public_key");
-	        echo Mage::helper("recaptcha")->recaptcha_get_html($publickey);
-	    }
-    ?>
-    
-    <div class="button-set">
-        <p class="required"><?php echo Mage::helper('contacts')->__('* Required Fields') ?></p>
-        <button class="form-button" type="submit"><span><?php echo Mage::helper('contacts')->__('Submit') ?></span></button>
+<h4><?php echo $this->__("You're reviewing: %s", $this->htmlEscape($this->getProductInfo()->getName())) ?></h4>
+<form action="<?php echo $this->getAction() ?>" method="post" id="review-form">
+<fieldset>
+    <?php if( $this->getRatings() && $this->getRatings()->getSize()): ?>
+    <div class="product-review-box">
+    <strong><?php echo $this->__('How do you rate this product?') ?><span class="required">*</span></strong><br />
+    <span id="input-message-box"></span>
+    <table class="data-table" id="product-review-table" cellspacing="0">
+        <thead>
+            <tr>
+                <th>&nbsp;</th>
+                <th><?php echo $this->__('1 star') ?></th>
+                <th><?php echo $this->__('2 stars') ?></th>
+                <th><?php echo $this->__('3 stars') ?></th>
+                <th><?php echo $this->__('4 stars') ?></th>
+                <th><?php echo $this->__('5 stars') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php $_oddIterator = 1; ?>
+        <?php foreach ($this->getRatings() as $_rating): ?>
+            <tr class="odd<?php if($_oddIterator == $this->getRatings()->getSize()): $_oddIterator = 0; ?> last<?php endif; ?>">
+                <td class="label"><?php echo $_rating->getRatingCode() ?></td>
+            <?php $_iterator = 1; ?>
+            <?php foreach ($_rating->getOptions() as $_option): ?>
+                <!--<td <?php if($_iterator == 5): ?>class="last"<?php endif; ?> style="width:60px;"><input type="radio" <?php if($_iterator == 5): $_iterator=0; ?>class="validate-one-required-by-name"<?php endif; ?> name="ratings[<?php echo $_rating->getId() ?>]" id="<?php echo $_rating->getRatingCode() ?>_<?php echo $_option->getValue() ?>" value="<?php echo $_option->getId() ?>"/></td>-->
+                <td<?php if($_iterator == 5): ?> class="last"<?php endif; ?> style="width:60px;"><input type="radio" name="ratings[<?php echo $_rating->getId() ?>]" id="<?php echo $_rating->getRatingCode() ?>_<?php echo $_option->getValue() ?>" value="<?php echo $_option->getId() ?>" /></td>
+            <?php $_iterator++ ?>
+            <?php endforeach; ?>
+            </tr>
+        <?php $_oddIterator ++; ?>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <input type="hidden" name="validate_rating" class="validate-rating" value="" />
+    <script type="text/javascript">decorateTable('product-review-table')</script>
     </div>
+    <?php endif; ?>
+        <?php // do not remove div - some problem whith validator in IE ?>
+        <div>
+        <label for="nickname_field"><?php echo $this->__('Nickname') ?><span class="required">*</span></label><br />
+        <input class="input-text required-entry" name="nickname" id="nickname_field" style="width: 450px;" type="text" value="<?php echo $this->htmlEscape($data->getNickname()) ?>" />
+        </div>
+
+        <div>
+        <label for="summary_field"><?php echo $this->__('Summary of Your Review') ?><span class="required">*</span></label><br />
+        <input name="title" class="input-text  required-entry" id="summary_field" style="width: 450px;" type="text" value="<?php echo $this->htmlEscape($data->getTitle()) ?>" />
+        </div>
+
+        <div>
+        <label for="review_field"><?php echo $this->__('Review') ?><span class="required">*</span></label><br />
+        <textarea class="required-entry" name="detail" id="review_field" cols="53" rows="10" style="width: 450px;"><?php echo $this->htmlEscape($data->getDetail()) ?></textarea>
+        </div>
+
+    <?php  // recaptcha
+        if( !(Mage::getStoreConfig("fontis_recaptcha/recaptcha/when_loggedin")  && (Mage::getSingleton('customer/session')->isLoggedIn())) )
+        {
+            if (Mage::getStoreConfig("fontis_recaptcha/recaptcha/review"))
+                echo $this->getChildHtml('recaptcha_box');
+        }
+    ?>
+
+    <div class="button-set">
+        <button class="form-button right" type="submit"><span><?php echo $this->__('Submit Review') ?></span></button>
+    </div>
+</fieldset>
 </form>
 <script type="text/javascript">
-    var contactForm = new VarienForm('contactForm', true);
+//<![CDATA[
+    var dataForm = new VarienForm('review-form');
+
+    Validation.addAllThese(
+    [
+           ['validate-rating', '<?php echo $this->__('Please select one of each of the ratings above') ?>', function(v) {
+                var trs = $('product-review-table').getElementsBySelector('tr');
+                var inputs;
+                var error = 1;
+
+                for( var j=0; j < trs.length; j++ ) {
+                    var tr = trs[j];
+                    if( j > 0 ) {
+                        inputs = tr.getElementsBySelector('input');
+
+                        for( i in inputs ) {
+                            if( inputs[i].checked == true ) {
+                                error = 0;
+                            }
+                        }
+
+                        if( error == 1 ) {
+                            return false;
+                        } else {
+                            error = 1;
+                        }
+                    }
+                }
+                return true;
+            }]
+    ]
+    );
+//]]>
 </script>
