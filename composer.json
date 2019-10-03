@@ -1,16 +1,5 @@
 {
-    "name": "OpenMageModuleFostering/Fontis_Recaptcha",
-    "type": "magento-module",
-    "license": "Open-Software-License-(OSL-3.0)",
-    "homepage": "",
-    "description": "This extension easily protects the "Send to Friend", "Contact Us", "Product Review" and customer registration forms from unwanted spambots by adding in reCAPTCHA to these forms.",
-    "authors": [
-    {
-        "name": "Denis Margetic",
-        "email": "denis@fontis.com.au"
-    }
-],
-    "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+    "keywords": [
+        "openmage-module"
+    ]
 }
