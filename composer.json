@@ -1,5 +1,7 @@
 {
     "keywords": [
         "openmage-module"
-    ]
+    ],
+    "name": "openmage-module-fostering\/fontis_recaptcha",
+    "license": "OSL-3.0"
 }
